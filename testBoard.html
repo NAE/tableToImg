@@ -1,0 +1,50 @@
+<html>
+<head>
+<script type="text/javascript">
+
+function convert(tableId){
+	var table = document.getElementById(tableId);
+	var tableWidth = table.offsetWidth;
+	var tableHeight = table.offsetHeight;
+
+	var canvas = document.createElement("canvas");
+	document.body.appendChild(canvas);
+	
+	var ctx = canvas.getContext("2d");
+	
+	//draw table outline
+	ctx.rect(0,0,tableWidth,tableHeight);
+	ctx.stroke();
+	
+	//draw headers
+	
+}
+
+window.onload = function(){
+	convert("testTable");
+}
+
+</script>
+</head>
+<body>
+	<table id="testTable" border="1">
+		<tr>
+			<th>
+				Table Header 1
+			</th>
+			<th>
+				Table Header 2
+			</th>
+		</tr>
+		<tr>
+			<td>
+				Cell 1
+			</td>
+			<td>
+				Cell 2
+			</td>
+		</tr>
+	</table>
+	<br />
+</body>
+</html>

@@ -24,6 +24,8 @@ function convert(tableId){
 	var tableHeight = table.offsetHeight + 0.5;
 
 	var canvas = document.createElement("canvas");
+	canvas.width = tableWidth;
+	canvas.height = tableHeight;
 	document.body.appendChild(canvas);
 	
 	var ctx = canvas.getContext("2d");
@@ -39,6 +41,11 @@ function convert(tableId){
 	var tableBorderColorRight = tableStyles.getPropertyValue("border-right-color");
 	
 	var tableBackgroundColor = tableStyles.getPropertyValue("background-color");
+	
+	//table background
+	ctx.beginPath();
+	ctx.fillStyle = tableBackgroundColor;
+	ctx.fillRect(0,0,tableWidth,tableHeight);
 	
 	//draw table outline
 	//border-top
@@ -94,17 +101,66 @@ function convert(tableId){
 				var cellType = cell.localName;
 				var cellWidth = cell.offsetWidth;
 				var cellHeight = cell.offsetHeight;
+				
+				//assume its just text for now
 				var cellContents = cell.innerHTML;
 				
-				var cellBorderWidthTop = cellStyles.getPropertyValue("border-top-width");
-				var cellBorderWidthBottom = cellStyles.getPropertyValue("border-bottom-width");
-				var cellBorderWidthLeft = cellStyles.getPropertyValue("border-left-width");
-				var cellBorderWidthRight = cellStyles.getPropertyValue("border-right-width");
+				var cellBorderWidthTop = parseInt(cellStyles.getPropertyValue("border-top-width"));
+				var cellBorderWidthBottom = parseInt(cellStyles.getPropertyValue("border-bottom-width"));
+				var cellBorderWidthLeft = parseInt(cellStyles.getPropertyValue("border-left-width"));
+				var cellBorderWidthRight = parseInt(cellStyles.getPropertyValue("border-right-width"));
 				
 				var cellBorderColorTop = cellStyles.getPropertyValue("border-top-color");
 				var cellBorderColorBottom = cellStyles.getPropertyValue("border-bottom-color");
 				var cellBorderColorLeft = cellStyles.getPropertyValue("border-left-color");
 				var cellBorderColorRight = cellStyles.getPropertyValue("border-right-color");
+				
+				var cellPositionX = cell.offsetLeft + 0.5;
+				var cellPositionY = cell.offsetTop + 0.5;
+				
+				var cellBackgroundColor = cellStyles.getPropertyValue("background-color");
+				
+				//cell background
+				ctx.beginPath();
+				ctx.fillStyle = cellBackgroundColor;
+				ctx.fillRect(cellPositionX,cellPositionY,cellWidth,cellHeight);
+				
+				//draw cell outline
+				if(cellBorderWidthTop > 0){
+					ctx.beginPath();
+					ctx.moveTo(cellPositionX,cellPositionY);
+					ctx.lineTo(cellPositionX + cellWidth,cellPositionY);
+					ctx.strokeStyle = cellBorderColorTop;
+					ctx.lineWidth = cellBorderWidthTop;
+					ctx.stroke();
+				}
+				
+				if(cellBorderWidthBottom > 0){
+					ctx.beginPath();
+					ctx.moveTo(cellPositionX,cellPositionY + cellHeight);
+					ctx.lineTo(cellPositionX + cellWidth,cellPositionY + cellHeight);
+					ctx.strokeStyle = cellBorderColorBottom;
+					ctx.lineWidth = cellBorderWidthBottom;
+					ctx.stroke();
+				}
+				
+				if(cellBorderWidthLeft > 0){
+					ctx.beginPath();
+					ctx.moveTo(cellPositionX,cellPositionY);
+					ctx.lineTo(cellPositionX,cellPositionY + cellHeight);
+					ctx.strokeStyle = cellBorderColorLeft;
+					ctx.lineWidth = cellBorderWidthLeft;
+					ctx.stroke();
+				}
+				
+				if(cellBorderWidthRight > 0){
+					ctx.beginPath();
+					ctx.moveTo(cellPositionX + cellWidth,cellPositionY);
+					ctx.lineTo(cellPositionX + cellWidth,cellPositionY + cellHeight);
+					ctx.strokeStyle = cellBorderColorRight;
+					ctx.lineWidth = cellBorderWidthRight;
+					ctx.stroke();
+				}
 			}
 		}
 	}
@@ -118,6 +174,12 @@ window.onload = function(){
 <style>
 
 #testTable {
+	background-color: black;
+	padding: 50px;
+}
+
+#testTable td {
+	background-color: pink
 }
 
 </style>

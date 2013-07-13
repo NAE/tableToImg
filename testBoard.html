@@ -2,22 +2,112 @@
 <head>
 <script type="text/javascript">
 
+CanvasRenderingContext2D.prototype.line = function(startX,startY,endX,endY,width,color){
+	width = width || 1;
+	color = color || "black";
+	
+	this.beginPath();
+	this.moveTo(startX,startY);
+	this.lineTo(endX,endY);
+	this.lineWidth = width;
+	this.strokeStyle = color;
+	this.stroke();
+	this.closePath();
+};
+
 function convert(tableId){
 	var table = document.getElementById(tableId);
-	var tableWidth = table.offsetWidth;
-	var tableHeight = table.offsetHeight;
+	var tableStyles = window.getComputedStyle(table,null);
+	console.log(tableStyles);
+	
+	var tableWidth = table.offsetWidth + 0.5;
+	var tableHeight = table.offsetHeight + 0.5;
 
 	var canvas = document.createElement("canvas");
 	document.body.appendChild(canvas);
 	
 	var ctx = canvas.getContext("2d");
 	
+	var tableBorderWidthTop = parseInt(tableStyles.getPropertyValue("border-top-width"));
+	var tableBorderWidthBottom = parseInt(tableStyles.getPropertyValue("border-bottom-width"));
+	var tableBorderWidthLeft = parseInt(tableStyles.getPropertyValue("border-left-width"));
+	var tableBorderWidthRight = parseInt(tableStyles.getPropertyValue("border-right-width"));
+	
+	var tableBorderColorTop = tableStyles.getPropertyValue("border-top-color");
+	var tableBorderColorBottom = tableStyles.getPropertyValue("border-bottom-color");
+	var tableBorderColorLeft = tableStyles.getPropertyValue("border-left-color");
+	var tableBorderColorRight = tableStyles.getPropertyValue("border-right-color");
+	
+	var tableBackgroundColor = tableStyles.getPropertyValue("background-color");
+	
 	//draw table outline
-	ctx.rect(0,0,tableWidth,tableHeight);
-	ctx.stroke();
+	//border-top
+	if(tableBorderWidthTop > 0){
+		ctx.beginPath();
+		ctx.moveTo(0.5,0.5);
+		ctx.lineTo(tableWidth,0.5);
+		ctx.strokeStyle = tableBorderColorTop;
+		ctx.lineWidth = tableBorderWidthTop;
+		ctx.stroke();
+	}
+	
+	//border-bottom
+	if(tableBorderWidthBottom > 0){ 
+		ctx.beginPath();
+		ctx.moveTo(tableWidth,tableHeight);
+		ctx.lineTo(0.5,tableHeight);
+		ctx.strokeStyle = tableBorderColorBottom;
+		ctx.lineWidth = tableBorderWidthBottom;
+		ctx.stroke();
+	}
+	
+	//border-left
+	if(tableBorderWidthLeft > 0){
+		ctx.beginPath();
+		ctx.moveTo(0.5,tableHeight);
+		ctx.lineTo(0.5,0.5);
+		ctx.strokeStyle = tableBorderColorLeft;
+		ctx.lineWidth = tableBorderWidthLeft;
+		ctx.stroke();
+	}
+	
+	//border-right
+	if(tableBorderWidthRight > 0){
+		ctx.beginPath();
+		ctx.moveTo(tableWidth,0.5);
+		ctx.lineTo(tableWidth,tableHeight);
+		ctx.strokeStyle = tableBorderColorRight;
+		ctx.lineWidth = tableBorderWidthRight;
+		ctx.stroke();
+	}
 	
 	//draw headers
+	var rows = table.rows;
 	
+	for(var n=0;n<rows.length;n++){
+		var row = rows[n];
+		var cells = row.cells;
+		for(var i=0;i<cells.length;i++){
+			var cell = cells[i];
+			if(cell){
+				var cellStyles = window.getComputedStyle(cell,null);
+				var cellType = cell.localName;
+				var cellWidth = cell.offsetWidth;
+				var cellHeight = cell.offsetHeight;
+				var cellContents = cell.innerHTML;
+				
+				var cellBorderWidthTop = cellStyles.getPropertyValue("border-top-width");
+				var cellBorderWidthBottom = cellStyles.getPropertyValue("border-bottom-width");
+				var cellBorderWidthLeft = cellStyles.getPropertyValue("border-left-width");
+				var cellBorderWidthRight = cellStyles.getPropertyValue("border-right-width");
+				
+				var cellBorderColorTop = cellStyles.getPropertyValue("border-top-color");
+				var cellBorderColorBottom = cellStyles.getPropertyValue("border-bottom-color");
+				var cellBorderColorLeft = cellStyles.getPropertyValue("border-left-color");
+				var cellBorderColorRight = cellStyles.getPropertyValue("border-right-color");
+			}
+		}
+	}
 }
 
 window.onload = function(){
@@ -25,6 +115,12 @@ window.onload = function(){
 }
 
 </script>
+<style>
+
+#testTable {
+}
+
+</style>
 </head>
 <body>
 	<table id="testTable" border="1">

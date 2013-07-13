@@ -24,8 +24,8 @@ function convert(tableId){
 	var tableHeight = table.offsetHeight + 0.5;
 
 	var canvas = document.createElement("canvas");
-	canvas.width = tableWidth;
-	canvas.height = tableHeight;
+	canvas.width = tableWidth + 1;
+	canvas.height = tableHeight + 1;
 	document.body.appendChild(canvas);
 	
 	var ctx = canvas.getContext("2d");
@@ -104,6 +104,21 @@ function convert(tableId){
 				
 				//assume its just text for now
 				var cellContents = cell.innerHTML;
+				var cellFontColor = cellStyles.getPropertyValue("color");
+				var cellFontStyle = cellStyles.getPropertyValue("font-style");
+				var cellFontWeight = cellStyles.getPropertyValue("font-weight");
+				var cellFontSize = cellStyles.getPropertyValue("font-size");
+				var cellFontVariant = cellStyles.getPropertyValue("font-variant");
+				var cellFont = cellFontStyle + " " + cellFontWeight + " " + cellFontSize + " " + cellFontVariant;
+				
+				//find cell line-height, can be different per browser
+				var cellRawLineHeight = cellStyles.getPropertyValue("line-height");
+				var cellLineHeight = (cellRawLineHeight == "normal") ? parseInt(cellFontSize) + 4 : parseInt(cellRawLineHeight);
+				
+				var cellPaddingTop = parseInt(cellStyles.getPropertyValue("padding-top"));
+				var cellPaddingBottom = parseInt(cellStyles.getPropertyValue("padding-bottom"));
+				var cellPaddingLeft = parseInt(cellStyles.getPropertyValue("padding-left"));
+				var cellPaddingRight = parseInt(cellStyles.getPropertyValue("padding-right"));
 				
 				var cellBorderWidthTop = parseInt(cellStyles.getPropertyValue("border-top-width"));
 				var cellBorderWidthBottom = parseInt(cellStyles.getPropertyValue("border-bottom-width"));
@@ -161,6 +176,11 @@ function convert(tableId){
 					ctx.lineWidth = cellBorderWidthRight;
 					ctx.stroke();
 				}
+				
+				ctx.beginPath();
+				ctx.font = cellFont;
+				ctx.fillStyle = cellFontColor;
+				ctx.fillText(cellContents,cellPositionX,cellPositionY + ((cellHeight - cellLineHeight)/2 ) + cellLineHeight - cellPaddingBottom + cellPaddingTop);
 			}
 		}
 	}
@@ -174,12 +194,14 @@ window.onload = function(){
 <style>
 
 #testTable {
-	background-color: black;
+	background-color: orange;
 	padding: 50px;
 }
 
 #testTable td {
-	background-color: pink
+	background-color: pink;
+	height: 40px;
+	padding-bottom: 20px;
 }
 
 </style>
@@ -187,20 +209,12 @@ window.onload = function(){
 <body>
 	<table id="testTable" border="1">
 		<tr>
-			<th>
-				Table Header 1
-			</th>
-			<th>
-				Table Header 2
-			</th>
+			<th>Table Header 1</th>
+			<th>Table Header 2</th>
 		</tr>
 		<tr>
-			<td>
-				Cell 1
-			</td>
-			<td>
-				Cell 2
-			</td>
+			<td>Cell 1</td>
+			<td>Cell 2</td>
 		</tr>
 	</table>
 	<br />
